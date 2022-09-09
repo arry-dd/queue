@@ -5,7 +5,7 @@ const store = createStore({
   state: {
     queue: [],
     visible: false, // 是否已经有弹窗展示
-    order: ['sigin', 'tasksuccess'], // 权重
+    order: ['modal2', 'modal3' ,'modal1'], // 权重
   },
   mutations: {
     /**
@@ -13,14 +13,27 @@ const store = createStore({
      * @param {Object} info 组件的实例、类型等信息
      */
     add(state, info) {
-      const queue = state.queue;
-      queue.push(info)
+      const { queue, order } = state;
+      const orderIndex = order.findIndex(ceil => ceil === info.type);
+      // 找到合适的位置插入
+      for (let i = 0; i < queue.length; i++) {
+        const curModal = queue[i];
+        const curOrderIndex = order.findIndex(ceil => ceil === curModal.type);
+        if (curOrderIndex > orderIndex) {
+          queue.splice(i - 1, 0, info);
+          return;
+        } else if (curModal.type === info.type) {
+          queue.splice(i, 0, info);
+          return;
+        }
+      }
+      queue.push(info);
     },
 
     pop(state) {
-      const { queue } = state;
+      const queue = state.queue;
       if (queue.length > 0) {
-        const { instance } = queue.pop();
+        const { instance } = queue.shift();
         instance.show();
         state.visible = true;
       } else {
@@ -30,9 +43,9 @@ const store = createStore({
   },
   actions: {
     // 往队列添加弹窗，并弹出队列的第一个弹窗
-    addModal(ctx, instance) {
-      ctx.commit('add', instance);
-      if (!ctx.state.visible) {
+    addModal(ctx, info = {}) {
+      ctx.commit('add', info);
+      if (!ctx.state.visible && info.show) {
         ctx.commit('pop');
       }
     },
