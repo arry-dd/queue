@@ -1,5 +1,5 @@
 <template>
-  <button @click="testShow">展示弹窗</button>
+  <button @click="testShow" style="margin-right: 10px;">展示弹窗</button>
 
   <button @click="testOrder">测试排序</button>
   <Modal1 ref="modal1"></Modal1>
@@ -32,6 +32,13 @@ function testShow() {
       show: true
     })
   }, 500);
+  setTimeout(() => {
+    store.dispatch('addModal', {
+      instance: modal3,
+      type: 'modal3',
+      show: true
+    })
+  }, 1000);
 }
 
 function testOrder() {
@@ -41,13 +48,11 @@ function testOrder() {
     show: false
   })
 
-  setTimeout(() => {
-    store.dispatch('addModal', {
-      instance: modal2,
-      type: 'modal2',
-      show: false
-    })
-  }, 500);
+  store.dispatch('addModal', {
+    instance: modal2,
+    type: 'modal2',
+    show: false
+  })
 
   setTimeout(() => {
     store.dispatch('addModal', {
@@ -55,7 +60,7 @@ function testOrder() {
       type: 'modal1',
       show: true
     })
-  }, 1000);
+  }, 300);
 }
 </script>
 
